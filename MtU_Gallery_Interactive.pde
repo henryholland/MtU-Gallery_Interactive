@@ -19,7 +19,7 @@ void setup() {
   curr_wheelAngle = 0;
   wheel_mouseOver = false;
   
-  wheel_diameter = 350;
+  wheel_diameter = 500;
   wheel_thickness = 150;
   wheel_x = 500;
   wheel_y = 400;
