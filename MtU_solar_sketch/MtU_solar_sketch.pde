@@ -1,10 +1,10 @@
 PFont font;
 
 PImage p_img;  
-float curr_orbit_angle; 
-float orbit_drag_offset;
-int orbit_x, orbit_y;
-boolean orbit_mouseOver, orbit_dragging;
+float curr_wheelAngle; 
+float wheel_dragOffset;
+int wheel_x, wheel_y;
+boolean wheel_mouseOver, wheel_dragging;
 
 //whatever
 
@@ -16,40 +16,41 @@ void setup() {
   textFont(font, 36);
   p_img = loadImage("protractor.png");
  
-  curr_orbit_angle = 0;
-  orbit_mouseOver = false;
-  orbit_x = 500;
-  orbit_y = 300;
+  curr_wheelAngle = 0;
+  wheel_mouseOver = false;
+  wheel_x = 500;
+  wheel_y = 300;
 }
 void draw() { 
   update();
   background(127); 
-  drawProtractor(orbit_x, orbit_y, curr_orbit_angle);
+  drawProtractor(wheel_x, wheel_y, curr_wheelAngle);
   
-  text(angleFromOrbitCentre(), 10, 20);
+  text(angleFromOrbitCentre(), 10, 40);
+  text(curr_wheelAngle, 10, 80);
 } 
 
 void update() {
-  if (overCircle(orbit_x, orbit_y, p_img.width)) {
-     orbit_mouseOver = true;
+  if (overCircle(wheel_x, wheel_y, p_img.width)) {
+     wheel_mouseOver = true;
   } else {
-       orbit_mouseOver = false;
+       wheel_mouseOver = false;
   }
-  if (orbit_dragging) {
-    curr_orbit_angle = angleFromOrbitCentre() + orbit_drag_offset;
+  if (wheel_dragging) {
+    curr_wheelAngle = angleFromOrbitCentre() - wheel_dragOffset;
   }
 }
 
 void mousePressed() {
-  if(orbit_mouseOver) {
-    orbit_dragging = true;
-    orbit_drag_offset = curr_orbit_angle ;
+  if(wheel_mouseOver) {
+    wheel_dragging = true;
+    wheel_dragOffset = angleFromOrbitCentre() - curr_wheelAngle;
   }
 }
 
 void mouseReleased() {
-  if(orbit_dragging) {
-    orbit_dragging = false;
+  if(wheel_dragging) {
+    wheel_dragging = false;
   }
 }
 
@@ -63,9 +64,9 @@ void drawProtractor(float x, float y, float a) {
 }
 
 float angleFromOrbitCentre() {
-  float dx = mouseX - orbit_x;
-  float dy = mouseY - orbit_y;
-  return degrees(atan2(dy, dx)) + 180;  
+  float dx = mouseX - wheel_x;
+  float dy = mouseY - wheel_y;
+  return degrees(atan2(dy, dx));  
 }
 
 boolean overCircle(int x, int y, int diameter) {
