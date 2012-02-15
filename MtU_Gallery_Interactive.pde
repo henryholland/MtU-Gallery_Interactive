@@ -24,6 +24,7 @@ void setup() {
   wheel_x = 500;
   wheel_y = 400;
 }
+
 void draw() { 
   update();
   background(127);
@@ -70,13 +71,15 @@ void drawWheel(float x, float y, float d, float thickness, float a) {
     int stroke_alpha = 125;
     if (wheel_mouseOver) { stroke_alpha = 200;}
     
+    float adjusted_diameter = d-(thickness/2);
+    
     stroke(204, 102, 0, stroke_alpha);
-    arc(0, 0, d, d, 0, PI/2);
-    arc(0, 0, d, d, PI, TWO_PI-PI/2);
+    arc(0, 0, adjusted_diameter, adjusted_diameter, 0, PI/2);
+    arc(0, 0, adjusted_diameter, adjusted_diameter, PI, TWO_PI-PI/2);
     
     stroke(102,204, 0, stroke_alpha);
-    arc(0, 0, d, d, PI/2, PI);
-    arc(0, 0, d, d, TWO_PI-PI/2, TWO_PI);
+    arc(0, 0, adjusted_diameter, adjusted_diameter, PI/2, PI);
+    arc(0, 0, adjusted_diameter, adjusted_diameter, TWO_PI-PI/2, TWO_PI);
     
     popMatrix();   
 }
