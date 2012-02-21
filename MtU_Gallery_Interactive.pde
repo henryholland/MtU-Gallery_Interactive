@@ -1,49 +1,80 @@
+import processing.opengl.*;
+
 PFont font;
 
 PImage p_img;  
-float curr_wheelAngle; 
+
+float curr_wheelAngle, prev_wheelAngle; 
+float wheel_acceleration, wheel_damping, wheel_acceleration_max;
 float wheel_dragOffset;
 int wheel_x, wheel_y, wheel_diameter, wheel_thickness;
 boolean wheel_mouseOver, wheel_dragging;
 
+
 //whatever
 
 void setup() {
-  size(1024, 768);  // Size must be the first statement
+  size(1024, 768);
+  
   frameRate(30);
   smooth();
+  
   font = loadFont("Serif-48.vlw");
   textFont(font, 36);
+  
   p_img = loadImage("protractor.png");
  
   curr_wheelAngle = 0;
   wheel_mouseOver = false;
-  
+  wheel_damping = 0.9;
+  wheel_acceleration = 0;
+  wheel_acceleration_max = 10;
   wheel_diameter = 500;
-  wheel_thickness = 150;
+  wheel_thickness = 350;
   wheel_x = 500;
   wheel_y = 400;
 }
 
 void draw() { 
-  update();
-  background(127);
-  drawWheel(wheel_x, wheel_y, wheel_diameter, wheel_thickness, curr_wheelAngle);
-  drawProtractor(wheel_x, wheel_y, curr_wheelAngle);
   
-  text(angleFromOrbitCentre(), 10, 40);
-  text(curr_wheelAngle, 10, 80);
-  text(curr_wheelAngle%360, 10, 120);
+  updateWheel();
+  background(127);
+ 
+//  drawWheel(wheel_x, wheel_y, wheel_diameter, wheel_thickness, curr_wheelAngle);
+//  rotateX(PI/6);
+//  rotateY(PI/3);
+  drawWheel(wheel_x, wheel_y, wheel_diameter, wheel_thickness, curr_wheelAngle);
+  //drawProtractor(wheel_x, wheel_y, curr_wheelAngle);
+  
+  float wheel_value;
+  
+  if (curr_wheelAngle <= 0) {
+    wheel_value = 0 - (curr_wheelAngle%360);
+  } else {
+    wheel_value = 360-(curr_wheelAngle%360);
+  }
+  
+  text(wheel_acceleration, 10, 80);
+  text(wheel_value, 10, 120);
 } 
 
-void update() {
+void updateWheel() {
   if (overRing(wheel_x, wheel_y, wheel_diameter, wheel_diameter- wheel_thickness)) {
      wheel_mouseOver = true;
   } else {
-       wheel_mouseOver = false;
+     wheel_mouseOver = false;
   }
   if (wheel_dragging) {
-    curr_wheelAngle = angleFromOrbitCentre() - wheel_dragOffset;
+    curr_wheelAngle = (angleFromOrbitCentre() - wheel_dragOffset)%360;
+    wheel_acceleration = (((curr_wheelAngle - prev_wheelAngle) + wheel_acceleration)/2) % wheel_acceleration_max;
+    prev_wheelAngle = curr_wheelAngle;
+  } else {
+    curr_wheelAngle = (curr_wheelAngle+wheel_acceleration)%360;
+    if (Math.pow(wheel_acceleration, 2) > .0001 ) {
+      wheel_acceleration *= wheel_damping;
+    } else{
+      wheel_acceleration = 0;
+    }
   }
 }
 
